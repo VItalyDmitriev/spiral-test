@@ -10,6 +10,8 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - php
+    links:
+      - redis
   php:
     build: ./php
     volumes:
@@ -32,6 +34,7 @@ services:
     build: ./node
     volumes:
       - ./src:/usr/share/nginx/html
+      - ./frontend:/usr/share/frontend
     ports:
       - 3000:3000
     networks:

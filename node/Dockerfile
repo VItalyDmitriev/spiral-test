@@ -8,3 +8,10 @@ COPY . .
 
 CMD [ "npm", "start" ]
 
+WORKDIR /usr/share/frontend
+
+RUN npm install
+
+COPY . .
+
+RUN npm run dev
