@@ -3,7 +3,8 @@
         <div class="row justify-content-center">
             <div class="input-group justify-content-center">
                 <div class="form-horizontal">
-                    <input type="text" v-model="data" required>
+                    <input type="text" v-model="data.name" required>
+                    <input type="text" v-model="data.surname" required>
                     <button @click="sendData" class="btn btn-primary btn-xs mt-1 mh-100 text mb-1">Add</button>
                 </div>
             </div>
@@ -24,14 +25,15 @@
             return {
                 data: [],
                 count: 0,
-                name: [],
+                fields: [],
             }
         },
         mounted() {
             var socket = io('http://laravel.dev1:3000', {transports: ['websocket', 'polling']});
-            socket.on('nicknames-add:App\\Events\\Api\\v1\\DataEvent', function (data) {
-                this.name = data.result;
-                $('#nickname-list').append('<li>'+this.name+'</li>');
+            socket.on('nicknames-add:App\\Events\\Api\\v2\\DataEvent', function (data) {
+                this.fields.name = data.name;
+                this.fields.surname = data.surname;
+                $('#nickname-list').append('<li>'+this.fields.name+':'+this.fields.surname+'</li>');
                 this.count++;
             }.bind(this));
             console.log('Component mounted.')
@@ -40,8 +42,8 @@
             sendData: function () {
                 axios({
                     method: 'post',
-                    url: 'http://laravel.dev1/api/v1/room/enter',
-                    params: {data: this.data},
+                    url: 'http://laravel.dev1/api/v2/room/enter',
+                    params: {data: [this.data.name, this.data.surname]},
                 });
             }
         }
