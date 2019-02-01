@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  nginx:
+    image: nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./src:/usr/share/nginx/html
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - php
+  php:
+    build: ./php
+    volumes:
+      - ./src:/usr/share/nginx/html
+  composer:
+    image: composer:latest
+    command: install
+    volumes:
+      - ./src:/usr/share/composer
+    working_dir: /usr/share/composer
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - ./data/redis:/data
+    networks:
+      - redis
+  node:
+    build: ./node
+    volumes:
+      - ./src:/usr/share/nginx/html
+    ports:
+      - 3000:3000
+    networks:
+      - redis
+
+networks:
+  redis:
+    driver: bridge
